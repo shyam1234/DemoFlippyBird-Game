@@ -16,15 +16,19 @@ import com.malviya.demoflypee.utils.Utils;
  */
 
 public class ActorKrishna extends BaseActor implements GameWorldConstants {
-    private static final float ACTOR_KRISHNA_INIT_POSI = -150;
+    private static final int ACTOR_KRISHNA_INIT_POSI = -150;
+    private final GameWorldView mGameWorldView;
     private float gravity;
     private int score;
-    private int life;
-    private int bullet_count;
+    private int mHealth;
     private int[] birdFrames = {R.drawable.bird0_0, R.drawable.bird0_1, R.drawable.bird0_2};
     private int frame;
     private float deltaTime;
     private boolean isTouch;
+
+    public ActorKrishna(GameWorldView gameWorldView) {
+        mGameWorldView = gameWorldView;
+    }
 
     @Override
     public void init() {
@@ -38,47 +42,61 @@ public class ActorKrishna extends BaseActor implements GameWorldConstants {
         frame = 0;
         deltaTime = 0;
         score = 0;
-        life = 0;
-        bullet_count = 0;
+        mHealth = 0;
         setW(Utils.getImageWidth(R.drawable.bird0_0));
-        setW(Utils.getImageHeight(R.drawable.bird0_0));
-        setX((AppInfo.WIDTH / 2 - getW() / 2) + ACTOR_KRISHNA_INIT_POSI);
-        setY((AppInfo.HEIGHT / 2 - getW() / 2));
+        setH(Utils.getImageHeight(R.drawable.bird0_0));
+        setX((AppInfo.SCREEN_WIDTH / 2 - getW() / 2) + ACTOR_KRISHNA_INIT_POSI);
+        setY((AppInfo.SCREEN_HEIGHT / 2 - getW() / 2));
     }
 
     @Override
     public void handleEvents() {
-        switch (getState()) {
-            case STATE_INIT:
-                break;
-            case STATE_RUNNING:
-                break;
-            case STATE_PAUSE:
-                break;
-            case STATE_STOP:
-                break;
-        }
     }
 
     @Override
     public void cycle(float fps) {
         frameCycle(fps);
         checkGravity(fps);
-        if (getY() >= (AppInfo.HEIGHT-getH())) {
-            setState(STATE_STOP);
-        } else if (getY() < getH()) {
+        if (getY() < getH()) {
             setY(getH());
         }
-        switch (getState()) {
-            case STATE_INIT:
-                break;
-            case STATE_RUNNING:
-                break;
-            case STATE_PAUSE:
-                break;
-            case STATE_STOP:
+        checkCollisionWithObstraclesAndOthers(fps);
+    }
 
-                break;
+    private void checkCollisionWithObstraclesAndOthers(float fps) {
+        for (ActorObstacle obj : mGameWorldView.mObstacleArrayList) {
+            boolean isCollide = Utils.isCollide(getX() + 10, getY() + 10,
+                    getW() - 30, getH() - 30, obj.getX(), obj.getY(), obj.getW(), obj.getH());
+            if (isCollide) {
+                calculateHealth();
+            }else{
+                countPassedPipe();
+            }
+        }
+        for (ActorBackground obj : mGameWorldView.arrayListFooter) {
+            boolean isCollide = Utils.isCollide(getX() + 10, getY() + 10,
+                    getW() - 30, getH() - 30, obj.getX(), obj.getY(), obj.getW(), obj.getH());
+            if (isCollide) {
+                calculateHealth();
+            }
+        }
+    }
+
+    private void countPassedPipe() {
+        for(ActorObstacle obstacle : mGameWorldView.mObstacleArrayList){
+            if((obstacle.getX()+obstacle.getW())<getX() && !obstacle.isCounted()){
+                obstacle.setCounted(true);
+                setScore(score+=1);
+            }
+        }
+    }
+
+    private void calculateHealth() {
+        if ((getY() >= (AppInfo.SCREEN_HEIGHT - Utils.getImageHeight(R.drawable.land))) || MAX_HEALTH - getHealth() <= 0) {
+            setHealth(MAX_HEALTH);
+            mGameWorldView.setGameState(STATE_GAMEOVER);
+        } else {
+            setHealth(mHealth += 1);
         }
     }
 
@@ -88,14 +106,14 @@ public class ActorKrishna extends BaseActor implements GameWorldConstants {
         } else {
             gravity = GRAVITY;
         }
-        gravity +=(gravity*fps);
-        setY(((int) (getY()) + gravity));
+        gravity += (gravity * fps);
+        setY((int) ((getY()) + gravity));
         isTouch = false;
     }
 
     private void frameCycle(float fps) {
-        deltaTime = deltaTime + ANIMATION_SPEED;
-        deltaTime +=(deltaTime*fps);
+        deltaTime = deltaTime + HERO_ANIMATION_SPEED;
+        deltaTime += (deltaTime * fps);
         frame = (int) deltaTime;
         if (frame >= birdFrames.length) {
             frame = 0;
@@ -105,7 +123,7 @@ public class ActorKrishna extends BaseActor implements GameWorldConstants {
 
     @Override
     public void renderer(Paint paint, Canvas canvas) {
-        canvas.drawBitmap(Utils.getBitMap(birdFrames[frame]), getX()*AppInfo.getScaleX(), getY()*AppInfo.getScaleY(), paint);
+        canvas.drawBitmap(Utils.getBitMap(birdFrames[frame]), getX() * AppInfo.getScaleX(), getY() * AppInfo.getScaleY(), paint);
 
     }
 
@@ -117,17 +135,23 @@ public class ActorKrishna extends BaseActor implements GameWorldConstants {
     @Override
     public void onTouch(MotionEvent v) {
         isTouch = true;
-        //Log.d("malviya","time "+ v.getEventTime());
     }
 
-  /* switch (getState()) {
-            case STATE_INIT:
-                break;
-            case STATE_RUNNING:
-                break;
-            case STATE_PAUSE:
-                break;
-            case STATE_STOP:
-                break;
-        }*/
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public int getHealth() {
+        return mHealth;
+    }
+
+    public void setHealth(int life) {
+        this.mHealth = life;
+    }
+
+
 }

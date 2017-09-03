@@ -2,17 +2,17 @@ package com.malviya.demoflypee.baseclasses;
 
 import android.view.MotionEvent;
 
-import com.malviya.demoflypee.constants.ActorConstants;
+import com.malviya.demoflypee.constants.ActorTypeConstants;
 
 /**
  * Created by 23508 on 8/14/2017.
  */
 
-public abstract class BaseActor implements AbstractGameWorld, ActorConstants {
-    private float x;
-    private float y;
-    private float w;
-    private float h;
+public abstract class BaseActor implements AbstractGameWorld, ActorTypeConstants {
+    private int x;
+    private int y;
+    private int w;
+    private int h;
     private int state;
     private int type;
 
@@ -25,31 +25,31 @@ public abstract class BaseActor implements AbstractGameWorld, ActorConstants {
     }
 
 
-    public float getX() {
+    public int getX() {
         return x;
     }
 
-    public void setX(float x) {
+    public void setX(int x) {
         this.x = x;
     }
 
-    public float getY() {
+    public int getY() {
         return y;
     }
 
-    public void setY(float y) {
+    public void setY(int y) {
         this.y = y;
     }
 
-    public float getW() {
+    public int getW() {
         return w;
     }
 
-    public void setW(float w) {
+    public void setW(int w) {
         this.w = w;
     }
 
-    public float getH() {
+    public int getH() {
         return h;
     }
 

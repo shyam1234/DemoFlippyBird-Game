@@ -49,7 +49,7 @@ public abstract class BaseGameWorld extends View implements GameWorldConstants, 
                 }
             }
         };
-        mTimer.schedule(mTimerTask, 0, DELAY_TIME);
+        mTimer.schedule(mTimerTask, 0, RNDERER_DELAY_TIME);
         init();
     }
 

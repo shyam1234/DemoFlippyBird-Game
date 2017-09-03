@@ -14,12 +14,13 @@ import com.malviya.demoflypee.utils.Utils;
  * Created by 23508 on 8/14/2017.
  */
 
-public class ActorObstacle extends BaseActor implements GameWorldConstants {
-    private int image;
-    private boolean counted;
+public class ActorBoard extends BaseActor implements GameWorldConstants {
+    private final GameWorldView mGameWorldObj;
+    protected final int image;
 
-    public ActorObstacle(int pImage, int pX, int pY) {
+    public ActorBoard(GameWorldView pObj, int pImage, int pX, int pY) {
         image = pImage;
+        mGameWorldObj = pObj;
         setX(pX);
         setY(pY);
         setW(Utils.getImageWidth(pImage));
@@ -28,8 +29,7 @@ public class ActorObstacle extends BaseActor implements GameWorldConstants {
 
     @Override
     public void init() {
-        setState(STATE_INIT);
-        reset();
+
     }
 
     @Override
@@ -44,13 +44,22 @@ public class ActorObstacle extends BaseActor implements GameWorldConstants {
 
     @Override
     public void cycle(float fps) {
-        setX((int) (getX()+(fps* SCROLL_OBSTRACLE_N_FOOTER_SPEED)));
+        int targetY = AppInfo.SCREEN_HEIGHT / 2 - getH() / 2;
+        if (getY() <= targetY) {
+            try {
+                Thread.sleep(HOLD_BOARD_TIME);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            mGameWorldObj.setGameState(STATE_MENU);
+        } else {
+            setY((int) (getY() + (fps*BOARD_SCROLLUP_SPEED)));
+        }
     }
-
 
     @Override
     public void renderer(Paint paint, Canvas canvas) {
-        canvas.drawBitmap(Utils.getBitMap(image), getX()* AppInfo.getScaleX(), getY()*AppInfo.getScaleY(), paint);
+        canvas.drawBitmap(Utils.getBitMap(image), getX() * AppInfo.getScaleX(), getY() * AppInfo.getScaleY(), paint);
     }
 
     @Override
@@ -58,27 +67,10 @@ public class ActorObstacle extends BaseActor implements GameWorldConstants {
 
     }
 
+
+
     @Override
     public void onTouch(MotionEvent v) {
 
     }
-
-    public void setCounted(boolean counted) {
-        this.counted = counted;
-    }
-
-    public boolean isCounted() {
-        return counted;
-    }
-
-  /* switch (getState()) {
-            case STATE_INIT:
-                break;
-            case STATE_RUNNING:
-                break;
-            case STATE_PAUSE:
-                break;
-            case STATE_MENU:
-                break;
-        }*/
 }

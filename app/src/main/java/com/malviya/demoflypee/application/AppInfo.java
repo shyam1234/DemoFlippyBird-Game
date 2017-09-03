@@ -12,8 +12,9 @@ import com.malviya.demoflypee.constants.GameWorldConstants;
  */
 
 public class AppInfo extends Application {
-    public static int WIDTH;
-    public static int HEIGHT;
+
+    public static int SCREEN_WIDTH;
+    public static int SCREEN_HEIGHT;
     private static AppInfo instance;
     private static float scaleX;
     private static float scaleY;
@@ -51,8 +52,8 @@ public class AppInfo extends Application {
         WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
         final DisplayMetrics displayMetrics = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(displayMetrics);
-        HEIGHT = displayMetrics.heightPixels;
-        WIDTH = displayMetrics.widthPixels;
+        SCREEN_HEIGHT = displayMetrics.heightPixels;
+        SCREEN_WIDTH = displayMetrics.widthPixels;
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
         float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
         //calculating scale factor as per base build
@@ -60,8 +61,8 @@ public class AppInfo extends Application {
         setScaleY(GameWorldConstants.BASE_BUILD_DP_HEIGHT / dpHeight);
         dpi = getResources().getConfiguration().densityDpi;
         Log.d("malviya", "+++++++++++++++++++++++++++++++++++++");
-        Log.d("malviya", "WIDTH++ " + WIDTH);
-        Log.d("malviya", "HEIGHT++ " + HEIGHT);
+        Log.d("malviya", "SCREEN_WIDTH++ " + SCREEN_WIDTH);
+        Log.d("malviya", "SCREEN_HEIGHT++ " + SCREEN_HEIGHT);
         Log.d("malviya", "dpHeight++ " + dpHeight);
         Log.d("malviya", "dpWidth++" + dpWidth);
         Log.d("malviya", "dpi++ " + dpi);
